@@ -1,0 +1,41 @@
+// x <= 4e9
+vector<int> primes;
+
+void sieve() {
+    const int LIM = 63246; // sq(x)
+    vector<bool> isPrime(LIM + 1, true);
+    isPrime[0] = isPrime[1] = false;
+
+    for (int i = 2; i * i <= LIM; i++) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= LIM; j += i)
+                isPrime[j] = false;
+        }
+    }
+
+    for (int i = 2; i <= LIM; i++)
+        if (isPrime[i])
+            primes.push_back(i);
+}
+
+vector<pair<int, int>> primeFactor(int n) {
+    vector<pair<int, int>> fac;
+
+    for (int p : primes) {
+        if (1LL * p * p > n) break;
+
+        if (n % p == 0) {
+            int cnt = 0;
+            while (n % p == 0) {
+                n /= p;
+                cnt++;
+            }
+            fac.push_back({p, cnt});
+        }
+    }
+
+    if (n > 1)
+        fac.push_back({n, 1});
+
+    return fac;
+}
