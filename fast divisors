@@ -1,0 +1,49 @@
+const int LIM = 63246; // 4e9
+vector<int> primes;
+ 
+void sieve() {
+    vector<bool> isPrime(LIM + 1, true);
+    isPrime[0] = isPrime[1] = false;
+    for (int i = 2; i * i <= LIM; i++) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= LIM; j += i)
+                isPrime[j] = false;
+        }
+    }
+    for (int i = 2; i <= LIM; i++)
+        if (isPrime[i]) primes.push_back(i);
+}
+ 
+vector<int> getDivisors(int n) {
+    vector<pair<int,int> > fac;
+ 
+    int x = n;
+    for (int p: primes) {
+        if (1LL * p * p > x) break;
+        if (x % p) continue;
+ 
+        int cnt = 0;
+        while (x % p == 0) {
+            x /= p;
+            cnt++;
+        }
+        fac.push_back({p, cnt});
+    }
+    if (x > 1) fac.push_back({x, 1});
+ 
+    vector<int> divs = {1};
+ 
+    for (auto [p, e]: fac) {
+        int sz = divs.size();
+        int cur = 1;
+        for (int i = 1; i <= e; i++) {
+            cur *= p;
+            for (int j = 0; j < sz; j++)
+                divs.push_back(divs[j] * cur);
+        }
+    }
+ 
+    sort(divs.begin(), divs.end());
+    return divs;
+}
+ 
