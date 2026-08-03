@@ -1,0 +1,49 @@
+const int N = 1e6 + 5;
+int spf[N];
+
+void buildSPF() {
+    for (int i = 0; i < N; i++)
+        spf[i] = i;
+
+    for (int i = 2; i * i < N; i++) {
+        if (spf[i] == i) { // i is prime
+            for (int j = i * i; j < N; j += i) {
+                if (spf[j] == j)
+                    spf[j] = i;
+            }
+        }
+    }
+}
+
+vector<pair<int,int>> factorize(int x) {
+    vector<pair<int,int>> res;
+    while (x > 1) {
+        int p = spf[x], cnt = 0;
+        while (x % p == 0) {
+            x /= p;
+            cnt++;
+        }
+        res.push_back({p, cnt});
+    }
+    return res;
+}
+
+vector<int> divisors(int x) {
+    auto fac = primeFactors(x); // vector<pair<int,int>>
+
+    vector<int> divs = {1};
+
+    for (auto [p, cnt] : fac) {
+        int sz = divs.size();
+        int cur = 1;
+
+        for (int i = 1; i <= cnt; i++) {
+            cur *= p;
+            for (int j = 0; j < sz; j++)
+                divs.push_back(divs[j] * cur);
+        }
+    }
+
+    sort(divs.begin(), divs.end());
+    return divs;
+}
